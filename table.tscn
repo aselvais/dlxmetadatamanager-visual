@@ -1,0 +1,17 @@
+[gd_scene format=2]
+
+[node name="WindowDialog" type="WindowDialog"]
+visible = true
+margin_left = -1.0
+margin_right = 1220.0
+margin_bottom = 954.0
+window_title = "Title here"
+resizable = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 1057.0
+margin_bottom = 818.0
+grow_horizontal = 2
+grow_vertical = 2
