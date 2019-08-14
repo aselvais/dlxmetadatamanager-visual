@@ -1,41 +1,60 @@
 extends Node2D
 
 var nodes = []
-var token = "6RfEWmbpVckHUNOCYYorC6aExrOfXvFFFoEXSwSayrxghyHIJGUPQSZCJm2Ay52d"
+var token = "4gZYp1S785NmOaHgxxAUsONsGMm0QIrSDbPDxz5QSRWCd1S0bGvbS3jCFdUzAHha"
 var uu = "http://localhost:8089"
 #var uu = "http://ala01095.deluxe.com:8089"
 
 func _ready():
-	$VSplitContainer/HSplitContainer/GraphEdit/GraphNode.visible = false
-	pass
-
-func get_api_url(model="origins"):
-	return uu + "/api/" + model + "?access_token=" + token
-
-func addLineToLog(msg):
-	$VSplitContainer/PanelContainer/RichTextLabel.text = msg #"\n" + str(OS.get_unix_time()) + " : " + msg
+	"""
+	Initialization when the scene is ready
+	"""
+	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit/GraphNode.visible = false
+	show_loading(false)
 
 func _on_HTTPRequest_request_completed(result, response_code, headers, body):
+	"""
+	Executed when we have a complete response from the the HTTP request
+	"""
 	var json = JSON.parse(body.get_string_from_utf8())
 	addLineToLog(str(json.result))
+	add_origin_nodes(json.result)
+	show_loading(false)
 
 func _on_Button_button_up():
-	$HTTPRequest.request(get_api_url("origins"))
+	"""
+	Executed when the Origins button was pressed
+	"""
+	call_api({"entity":"origins"})
 
 func _on_btn_databases_button_up():
-	$HTTPRequest.request(get_api_url("databases"))
+	"""
+	Executed when the Databases button was pressed
+	"""
+	call_api({"entity":"databases"})
 
 func _on_btn_schemas_button_up():
-	$HTTPRequest.request(get_api_url("schemas"))
+	"""
+	Executed when the Schemas button was pressed
+	"""
+	call_api({"entity":"schemas"})
 
 func _on_btn_tables_button_up():
-	$HTTPRequest.request(get_api_url("tables"))
+	"""
+	Executed when the Tables button was pressed
+	"""
+	call_api({"entity":"tables"})
 
 func _on_btn_fields_button_up():
-	$HTTPRequest.request(get_api_url("fields"))
-
+	"""
+	Executed when the Fields button was pressed
+	"""
+	call_api({"entity":"fields"})
 
 func _on_btn_test_button_up():
+	"""
+	Executed when the Duplicate table button was pressed
+	"""
 	create_node("Table " + str(len(nodes)), [
 		{'name':'field 01', 'is_pk':1, 'is_fk':0},
 		{'name':'field 02', 'is_pk':0, 'is_fk':0},
@@ -46,27 +65,111 @@ func _on_btn_test_button_up():
 		{'name':'field 07', 'is_pk':0, 'is_fk':0},
 		{'name':'field 08', 'is_pk':0, 'is_fk':0},
 		{'name':'field 09', 'is_pk':0, 'is_fk':0}
-		])
+	])
+
+func _on_GraphEdit_connection_request(from, from_slot, to, to_slot):
+	"""
+	Manages the connection in between table entities
+	"""
+	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.connect_node(from, from_slot, to, to_slot)
+
+
+func _on_btn_submit_button_up():
+	"""
+	Executed when the submit (username/password) was pressed
+	"""
+	var username_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_username.text
+	var password_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_password.text
+	addLineToLog("login: " + username_txt + " | Password: " + password_txt )
+
+func _on_btn_clearnodes_button_up():
+	"""
+	Executed when clear all nodes button is clicked
+	"""
+	clear_all_nodes()
+
+func get_api_url(model="origins"):
+	"""
+	Returns the URL of the API
+	"""
+	var prms = "/api/" + model + "?"
+	if model == "tables":
+		prms += "filter=%7B%22where%22:%7B%22schemas_idh%22:%2270807018e45b3b6ea4dee1a1a3fed17e%22%7D%7D"
+	else:
+		prms += "filter=%7B%22limit%22%3A99%7D"
+	return uu + prms + "&access_token=" + token
+
+func addLineToLog(msg):
+	"""
+	Writes to the visual console in the GUI
+	"""
+	$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text += msg #"\n" + str(OS.get_unix_time()) + " : " + msg
+
+func show_loading(on = true):
+	if on:
+		$LoadingNode2D.visible = true
+		$LoadingNode2D/LoadingNode/LoadingWindowDialog.show()
+	else:
+		$LoadingNode2D.visible = false
+		$LoadingNode2D/LoadingNode/LoadingWindowDialog.hide()		
 
 func create_node(title="", elems=[]):
-	nodes.append($VSplitContainer/HSplitContainer/GraphEdit/GraphNode.duplicate())
+	"""
+	Create a new table node in the graph
+	
+	@param title The title of the window
+	@param elems Array of elements (fields) to populate in the node
+	"""
+	nodes.append($MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit/GraphNode.duplicate())
 	var arnbr = len(nodes)-1
-	$VSplitContainer/HSplitContainer/GraphEdit.add_child(nodes[arnbr])
+	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.add_child(nodes[arnbr])
 	var n : GraphNode = nodes[arnbr]
 	n.title = title
 	var vv = n.get_offset()
 	vv.x += 20*(arnbr+1)
 	vv.y += 20*(arnbr+1)
 	n.set_offset(vv)
-	
+	# Loop in the elements array (adding field names)
 	var idx = 0
 	for i in elems:
 		var lbl = Label.new()
 		lbl.text = i.name
 		n.add_child(lbl)
+		# Makes connector available for the PK and FKs
 		if i.is_pk == 1 or i.is_fk == 1:
-			n.set_slot(idx, true, 0, Color.aliceblue, true, 0, Color.aliceblue)
+			n.set_slot(idx, true, 0, Color.blue, true, 0, Color.white)
 		idx += 1
-	
+	# make it visible when the rest was done
 	n.visible = true
-	# set_slot ( int idx, 	bool enable_left, int type_left, Color color_left, bool enable_right, int type_right, Color color_right, Texture custom_left=null, Texture custom_right=null )
+
+func clear_all_nodes():
+	"""
+	Clear all the nodes in the graph
+	"""
+	var kids = $MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.get_children()
+	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.clear_connections()
+	
+	for kid in kids:
+		if kid.is_class("GraphNode"):
+			var k : GraphNode = kid
+			if k.title != "TABLE (model)":
+				kid.clear_all_slots()
+				$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.remove_child(kid)
+	nodes = []
+
+func call_api(params={}):
+	"""
+	Calls the API
+	"""
+	show_loading(true)
+	if params.entity != "":
+		return $HTTPRequest.request(get_api_url(params.entity))
+	return show_loading(false)
+
+func add_origin_nodes(e=[]):
+	"""
+	Add nodes to the graph
+	"""
+	for n in e:
+		create_node(n.name)
+
