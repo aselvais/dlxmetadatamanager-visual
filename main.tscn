@@ -17,18 +17,19 @@ __meta__ = {
 
 [node name="HSplitContainer" type="HSplitContainer" parent="MainGUI2D/VSplitContainer"]
 margin_right = 1920.0
-margin_bottom = 988.0
+margin_bottom = 868.0
 split_offset = 100
 
 [node name="PanelContainer" type="PanelContainer" parent="MainGUI2D/VSplitContainer/HSplitContainer"]
+editor/display_folded = true
 margin_right = 223.0
-margin_bottom = 988.0
+margin_bottom = 868.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 216.0
-margin_bottom = 981.0
+margin_bottom = 861.0
 
 [node name="label_username" type="Label" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
 margin_right = 209.0
@@ -129,7 +130,7 @@ text = "Clear all nodes"
 [node name="GraphEdit" type="GraphEdit" parent="MainGUI2D/VSplitContainer/HSplitContainer"]
 margin_left = 235.0
 margin_right = 1920.0
-margin_bottom = 988.0
+margin_bottom = 868.0
 scroll_offset = Vector2( 0, -260 )
 
 [node name="GraphNode" type="GraphNode" parent="MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit"]
@@ -142,16 +143,16 @@ resizable = true
 
 [node name="PanelContainer" type="PanelContainer" parent="MainGUI2D/VSplitContainer"]
 editor/display_folded = true
-margin_top = 1000.0
+margin_top = 880.0
 margin_right = 1920.0
 margin_bottom = 1080.0
-rect_min_size = Vector2( 0, 80 )
+rect_min_size = Vector2( 0, 200 )
 
 [node name="RichTextLabel" type="RichTextLabel" parent="MainGUI2D/VSplitContainer/PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 1913.0
-margin_bottom = 73.0
+margin_bottom = 193.0
 custom_colors/default_color = Color( 0.243137, 1, 0, 1 )
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]

@@ -2,8 +2,8 @@ extends Node2D
 
 var nodes = []
 var token = "4gZYp1S785NmOaHgxxAUsONsGMm0QIrSDbPDxz5QSRWCd1S0bGvbS3jCFdUzAHha"
-var uu = "http://localhost:8089"
-#var uu = "http://ala01095.deluxe.com:8089"
+#var uu = "http://localhost:8089"
+var uu = "http://ala01095.deluxe.com:8089"
 
 func _ready():
 	"""
@@ -17,8 +17,15 @@ func _on_HTTPRequest_request_completed(result, response_code, headers, body):
 	Executed when we have a complete response from the the HTTP request
 	"""
 	var json = JSON.parse(body.get_string_from_utf8())
-	addLineToLog(str(json.result))
-	add_origin_nodes(json.result)
+	_log(str(json.result))
+	if response_code == 200:
+		if json.result.has("error"):
+			_log("API ERROR!!!!!")
+		elif json.result.has("created") and json.result.has("id"):
+			token = json.result.id
+			_log("New token set to : " + token)
+		elif json.result[0] and json.result[0].has("name"):
+			add_origin_nodes(json.result)
 	show_loading(false)
 
 func _on_Button_button_up():
@@ -80,7 +87,7 @@ func _on_btn_submit_button_up():
 	"""
 	var username_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_username.text
 	var password_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_password.text
-	addLineToLog("login: " + username_txt + " | Password: " + password_txt )
+	call_api({"entity": "login", "username": username_txt, "password": password_txt})
 
 func _on_btn_clearnodes_button_up():
 	"""
@@ -88,22 +95,26 @@ func _on_btn_clearnodes_button_up():
 	"""
 	clear_all_nodes()
 
-func get_api_url(model="origins"):
+func get_api_url(model="origins", params={}):
 	"""
 	Returns the URL of the API
 	"""
 	var prms = "/api/" + model + "?"
 	if model == "tables":
 		prms += "filter=%7B%22where%22:%7B%22schemas_idh%22:%2270807018e45b3b6ea4dee1a1a3fed17e%22%7D%7D"
+	if model == "login":
+		return uu + "/api/Users/login"
 	else:
 		prms += "filter=%7B%22limit%22%3A99%7D"
 	return uu + prms + "&access_token=" + token
 
-func addLineToLog(msg):
+func _log(msg):
 	"""
 	Writes to the visual console in the GUI
 	"""
-	$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text += msg #"\n" + str(OS.get_unix_time()) + " : " + msg
+	print(msg)
+	#"\n" + str(OS.get_unix_time()) + " : " + msg
+	$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text = msg + "\n" + $MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text
 
 func show_loading(on = true):
 	if on:
@@ -163,7 +174,11 @@ func call_api(params={}):
 	"""
 	show_loading(true)
 	if params.entity != "":
-		return $HTTPRequest.request(get_api_url(params.entity))
+		if params.entity == "login":
+			return $HTTPRequest.request(get_api_url(params.entity, params), ["Content-Type: application/json"], false, HTTPClient.METHOD_POST, JSON.print(params))
+		else:
+			return $HTTPRequest.request(get_api_url(params.entity, params))
+	
 	return show_loading(false)
 
 func add_origin_nodes(e=[]):
