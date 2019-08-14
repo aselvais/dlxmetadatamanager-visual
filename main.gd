@@ -36,17 +36,37 @@ func _on_btn_fields_button_up():
 
 
 func _on_btn_test_button_up():
-	create_node("Table " + str(len(nodes)))
+	create_node("Table " + str(len(nodes)), [
+		{'name':'field 01', 'is_pk':1, 'is_fk':0},
+		{'name':'field 02', 'is_pk':0, 'is_fk':0},
+		{'name':'field 03', 'is_pk':0, 'is_fk':1},
+		{'name':'field 04', 'is_pk':0, 'is_fk':0},
+		{'name':'field 05', 'is_pk':0, 'is_fk':0},
+		{'name':'field 06', 'is_pk':0, 'is_fk':0},
+		{'name':'field 07', 'is_pk':0, 'is_fk':0},
+		{'name':'field 08', 'is_pk':0, 'is_fk':0},
+		{'name':'field 09', 'is_pk':0, 'is_fk':0}
+		])
 
-func create_node(title=""):
+func create_node(title="", elems=[]):
 	nodes.append($VSplitContainer/HSplitContainer/GraphEdit/GraphNode.duplicate())
 	var arnbr = len(nodes)-1
 	$VSplitContainer/HSplitContainer/GraphEdit.add_child(nodes[arnbr])
-	nodes[arnbr].title = title
-	var vv = nodes[arnbr].get_offset()
+	var n : GraphNode = nodes[arnbr]
+	n.title = title
+	var vv = n.get_offset()
 	vv.x += 20*(arnbr+1)
 	vv.y += 20*(arnbr+1)
-	nodes[arnbr].set_offset(vv)
-	nodes[arnbr].set_slot (0, true, true,)
-	nodes[arnbr].visible = true
+	n.set_offset(vv)
+	
+	var idx = 0
+	for i in elems:
+		var lbl = Label.new()
+		lbl.text = i.name
+		n.add_child(lbl)
+		if i.is_pk == 1 or i.is_fk == 1:
+			n.set_slot(idx, true, 0, Color.aliceblue, true, 0, Color.aliceblue)
+		idx += 1
+	
+	n.visible = true
 	# set_slot ( int idx, 	bool enable_left, int type_left, Color color_left, bool enable_right, int type_right, Color color_right, Texture custom_left=null, Texture custom_right=null )
