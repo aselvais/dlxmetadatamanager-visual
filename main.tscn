@@ -25,6 +25,7 @@ margin_right = 236.0
 margin_bottom = 868.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer"]
+editor/display_folded = true
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 229.0
@@ -38,103 +39,130 @@ text = "Environment"
 [node name="label_username" type="Label" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
 margin_top = 24.0
 margin_right = 222.0
-margin_bottom = 84.0
-rect_min_size = Vector2( 0, 60 )
+margin_bottom = 64.0
+rect_min_size = Vector2( 0, 40 )
 text = "Username"
 valign = 2
 
 [node name="input_username" type="LineEdit" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 88.0
+margin_top = 68.0
 margin_right = 222.0
-margin_bottom = 112.0
+margin_bottom = 92.0
 text = "admin"
 
 [node name="label_password" type="Label" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 116.0
+margin_top = 96.0
 margin_right = 222.0
-margin_bottom = 130.0
+margin_bottom = 110.0
 text = "Password"
 
 [node name="input_password" type="LineEdit" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 134.0
+margin_top = 114.0
 margin_right = 222.0
-margin_bottom = 158.0
+margin_bottom = 138.0
 text = "adminadmin112"
 secret = true
 
 [node name="btn_submit" type="Button" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 162.0
+margin_top = 142.0
 margin_right = 222.0
-margin_bottom = 182.0
+margin_bottom = 162.0
 text = "Submit"
 
 [node name="label_APIs" type="Label" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 186.0
+margin_top = 166.0
 margin_right = 222.0
-margin_bottom = 246.0
-rect_min_size = Vector2( 0, 60 )
+margin_bottom = 206.0
+rect_min_size = Vector2( 0, 40 )
 text = "APIs"
 valign = 2
 
 [node name="btn_origins" type="Button" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 250.0
+margin_top = 210.0
 margin_right = 222.0
-margin_bottom = 270.0
+margin_bottom = 230.0
 text = "Origins"
 
 [node name="btn_databases" type="Button" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 274.0
+margin_top = 234.0
 margin_right = 222.0
-margin_bottom = 294.0
+margin_bottom = 254.0
 text = "Databases"
 
 [node name="btn_schemas" type="Button" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 298.0
+margin_top = 258.0
 margin_right = 222.0
-margin_bottom = 318.0
+margin_bottom = 278.0
 text = "Schemas"
 
 [node name="btn_tables" type="Button" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 322.0
+margin_top = 282.0
 margin_right = 222.0
-margin_bottom = 342.0
+margin_bottom = 302.0
 text = "Tables"
 
 [node name="btn_fields" type="Button" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 346.0
+margin_top = 306.0
 margin_right = 222.0
-margin_bottom = 366.0
+margin_bottom = 326.0
 text = "Fields"
 
 [node name="label_APIs2" type="Label" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 370.0
+margin_top = 330.0
 margin_right = 222.0
-margin_bottom = 430.0
-rect_min_size = Vector2( 0, 60 )
+margin_bottom = 370.0
+rect_min_size = Vector2( 0, 40 )
 text = "Tests"
 valign = 2
 
 [node name="btn_test" type="Button" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 434.0
+margin_top = 374.0
 margin_right = 222.0
-margin_bottom = 454.0
+margin_bottom = 394.0
 text = "Duplicate table"
 
 [node name="label_APIs3" type="Label" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 458.0
+margin_top = 398.0
 margin_right = 222.0
-margin_bottom = 518.0
-rect_min_size = Vector2( 0, 60 )
+margin_bottom = 438.0
+rect_min_size = Vector2( 0, 40 )
 text = "Other Actions"
 valign = 2
 
 [node name="btn_clearnodes" type="Button" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
-margin_top = 522.0
+margin_top = 442.0
 margin_right = 222.0
-margin_bottom = 542.0
+margin_bottom = 462.0
 text = "Clear all nodes"
 
+[node name="label_APIs4" type="Label" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
+margin_top = 466.0
+margin_right = 222.0
+margin_bottom = 506.0
+rect_min_size = Vector2( 0, 40 )
+text = "DB selection"
+valign = 2
+
+[node name="origins_select" type="OptionButton" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
+margin_top = 510.0
+margin_right = 222.0
+margin_bottom = 530.0
+text = "Origins"
+
+[node name="databases_select" type="OptionButton" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
+margin_top = 534.0
+margin_right = 222.0
+margin_bottom = 554.0
+text = "Databses"
+
+[node name="schemas_select" type="OptionButton" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
+margin_top = 558.0
+margin_right = 222.0
+margin_bottom = 578.0
+text = "Schemas"
+
 [node name="GraphEdit" type="GraphEdit" parent="MainGUI2D/VSplitContainer/HSplitContainer"]
+editor/display_folded = true
 margin_left = 248.0
 margin_right = 1920.0
 margin_bottom = 868.0
@@ -149,6 +177,7 @@ title = "TABLE (model)"
 resizable = true
 
 [node name="PanelContainer" type="PanelContainer" parent="MainGUI2D/VSplitContainer"]
+editor/display_folded = true
 margin_top = 880.0
 margin_right = 1920.0
 margin_bottom = 1080.0

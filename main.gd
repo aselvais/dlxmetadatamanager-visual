@@ -1,8 +1,14 @@
 extends Node2D
 
+const DlxmetadatamanagerAPI = preload("res://DlxmetadatamanagerAPI.gd")
+
+# Container array for the nodes we are displaying in the graph
 var nodes = []
+# Token used for API authentication
 var token = "4gZYp1S785NmOaHgxxAUsONsGMm0QIrSDbPDxz5QSRWCd1S0bGvbS3jCFdUzAHha"
+# Possible URLs for the API
 var uu = [ "http://localhost:8089", "http://ala01095.deluxe.com:8089"]
+var api = DlxmetadatamanagerAPI.new()
 
 func _ready():
 	"""
@@ -12,11 +18,9 @@ func _ready():
 	_log("OS class: " + OS.get_class())
 	_log("OS date time: " + str(OS.get_datetime()))
 	_log("Engine properties: " + str(Engine.get_property_list()))
-	
-	var envm = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select
+	var envm : OptionButton = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select
 	envm.add_item("Localhost", 0)
 	envm.add_item("Datascience VM", 1)
-	
 	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit/GraphNode.visible = false
 	show_loading(false)
 
@@ -110,12 +114,14 @@ func get_api_url(model="origins", params={}):
 	var uuenv = uu[$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select.get_selected_id()]
 	var prms = "/api/" + model + "?"
 	if model == "tables":
-		prms += "filter=%7B%22where%22:%7B%22schemas_idh%22:%2270807018e45b3b6ea4dee1a1a3fed17e%22%7D%7D"
+		prms += "filter=" + '{"where":{"schemas_idh":"4954873733c5d3600d639b38f1bfc5a6"}}'.percent_encode()
+		return uuenv + prms + "&access_token=" + token;
 	if model == "login":
 		return uuenv + "/api/Users/login"
 	else:
-		prms += "filter=%7B%22limit%22%3A99%7D"
-	return uuenv + prms + "&access_token=" + token
+		prms += "filter=" + '{"limit":22}'.percent_encode()
+	var fullurl = uuenv + prms + "&access_token=" + token;
+	return fullurl
 
 func _log(msg):
 	"""
