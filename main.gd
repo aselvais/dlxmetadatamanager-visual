@@ -43,7 +43,7 @@ func _on_HTTPRequest_request_completed(result, response_code, headers, body):
 			api.token = json.result.id
 			_log("New token set to : " + api.token)
 		elif json.result[0] and json.result[0].has("name"):
-			graphProcessing.add_origin_nodes(json.result)
+			graphProcessing.add_nodes(json.result)
 	api.show_loading(false)
 
 func _on_Button_button_up():
