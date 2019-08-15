@@ -1,10 +1,11 @@
 extends Node2D
 
 const DlxmetadatamanagerAPI = preload("res://DlxmetadatamanagerAPI.gd")
+const GraphProcessing = preload("res://GraphProcessing.gd")
 
 # Container array for the nodes we are displaying in the graph
-var nodes = []
 var api : DlxmetadatamanagerAPI
+var graphProcessing : GraphProcessing
 
 func _ready():
 	"""
@@ -15,7 +16,11 @@ func _ready():
 			$LoadingNode2D/LoadingNode/LoadingWindowDialog,
 			$HTTPRequest, 
 			$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select
-			)
+	)
+	graphProcessing = GraphProcessing.new(
+			$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit, 
+			$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit/GraphNode
+	)
 	_log("OS name: " + OS.get_name())
 	_log("OS class: " + OS.get_class())
 	_log("OS date time: " + str(OS.get_datetime()))
@@ -23,7 +28,6 @@ func _ready():
 	var envm : OptionButton = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select
 	envm.add_item("Localhost", 0)
 	envm.add_item("Datascience VM", 1)
-	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit/GraphNode.visible = false
 	api.show_loading(false)
 
 func _on_HTTPRequest_request_completed(result, response_code, headers, body):
@@ -39,7 +43,7 @@ func _on_HTTPRequest_request_completed(result, response_code, headers, body):
 			api.token = json.result.id
 			_log("New token set to : " + api.token)
 		elif json.result[0] and json.result[0].has("name"):
-			add_origin_nodes(json.result)
+			graphProcessing.add_origin_nodes(json.result)
 	api.show_loading(false)
 
 func _on_Button_button_up():
@@ -76,24 +80,7 @@ func _on_btn_test_button_up():
 	"""
 	Executed when the Duplicate table button was pressed
 	"""
-	create_node("Table " + str(len(nodes)), [
-		{'name':'field 01', 'is_pk':1, 'is_fk':0},
-		{'name':'field 02', 'is_pk':0, 'is_fk':0},
-		{'name':'field 03', 'is_pk':0, 'is_fk':1},
-		{'name':'field 04', 'is_pk':0, 'is_fk':0},
-		{'name':'field 05', 'is_pk':0, 'is_fk':0},
-		{'name':'field 06', 'is_pk':0, 'is_fk':0},
-		{'name':'field 07', 'is_pk':0, 'is_fk':0},
-		{'name':'field 08', 'is_pk':0, 'is_fk':0},
-		{'name':'field 09', 'is_pk':0, 'is_fk':0}
-	])
-
-func _on_GraphEdit_connection_request(from, from_slot, to, to_slot):
-	"""
-	Manages the connection in between table entities
-	"""
-	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.connect_node(from, from_slot, to, to_slot)
-
+	graphProcessing.add_test_table()
 
 func _on_btn_submit_button_up():
 	"""
@@ -107,7 +94,13 @@ func _on_btn_clearnodes_button_up():
 	"""
 	Executed when clear all nodes button is clicked
 	"""
-	clear_all_nodes()
+	graphProcessing.clear_all_nodes()
+
+func _on_GraphEdit_connection_request(from, from_slot, to, to_slot):
+	"""
+	Manages the connection in between table entities
+	"""
+	graphProcessing.connect_node(from, from_slot, to, to_slot)
 
 func _log(msg):
 	"""
@@ -116,54 +109,4 @@ func _log(msg):
 	print(msg)
 	$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text = msg + "\n" + $MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text
 
-func create_node(title="", elems=[]):
-	"""
-	Create a new table node in the graph
-	
-	@param title The title of the window
-	@param elems Array of elements (fields) to populate in the node
-	"""
-	nodes.append($MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit/GraphNode.duplicate())
-	var arnbr = len(nodes)-1
-	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.add_child(nodes[arnbr])
-	var n : GraphNode = nodes[arnbr]
-	n.title = title
-	var vv = n.get_offset()
-	vv.x += 20*(arnbr+1)
-	vv.y += 20*(arnbr+1)
-	n.set_offset(vv)
-	# Loop in the elements array (adding field names)
-	var idx = 0
-	for i in elems:
-		var lbl = Label.new()
-		lbl.text = i.name
-		n.add_child(lbl)
-		# Makes connector available for the PK and FKs
-		if i.is_pk == 1 or i.is_fk == 1:
-			n.set_slot(idx, true, 0, Color.blue, true, 0, Color.white)
-		idx += 1
-	# make it visible when the rest was done
-	n.visible = true
-
-func clear_all_nodes():
-	"""
-	Clear all the nodes in the graph
-	"""
-	var kids = $MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.get_children()
-	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.clear_connections()
-	
-	for kid in kids:
-		if kid.is_class("GraphNode"):
-			var k : GraphNode = kid
-			if k.title != "TABLE (model)":
-				kid.clear_all_slots()
-				$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.remove_child(kid)
-	nodes = []
-
-func add_origin_nodes(e=[]):
-	"""
-	Add nodes to the graph
-	"""
-	for n in e:
-		create_node(n.name)
 

@@ -13,9 +13,15 @@ _global_script_classes=[ {
 "class": "DlxmetadatamanagerAPI",
 "language": "GDScript",
 "path": "res://DlxmetadatamanagerAPI.gd"
+}, {
+"base": "Node",
+"class": "GraphProcessing",
+"language": "GDScript",
+"path": "res://GraphProcessing.gd"
 } ]
 _global_script_class_icons={
-"DlxmetadatamanagerAPI": ""
+"DlxmetadatamanagerAPI": "",
+"GraphProcessing": ""
 }
 
 [application]
