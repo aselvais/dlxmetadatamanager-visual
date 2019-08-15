@@ -4,16 +4,18 @@ const DlxmetadatamanagerAPI = preload("res://DlxmetadatamanagerAPI.gd")
 
 # Container array for the nodes we are displaying in the graph
 var nodes = []
-# Token used for API authentication
-var token = "4gZYp1S785NmOaHgxxAUsONsGMm0QIrSDbPDxz5QSRWCd1S0bGvbS3jCFdUzAHha"
-# Possible URLs for the API
-var uu = [ "http://localhost:8089", "http://ala01095.deluxe.com:8089"]
-var api = DlxmetadatamanagerAPI.new()
+var api : DlxmetadatamanagerAPI
 
 func _ready():
 	"""
 	Initialization when the scene is ready
 	"""
+	api = DlxmetadatamanagerAPI.new( 
+			$LoadingNode2D,
+			$LoadingNode2D/LoadingNode/LoadingWindowDialog,
+			$HTTPRequest, 
+			$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select
+			)
 	_log("OS name: " + OS.get_name())
 	_log("OS class: " + OS.get_class())
 	_log("OS date time: " + str(OS.get_datetime()))
@@ -22,7 +24,7 @@ func _ready():
 	envm.add_item("Localhost", 0)
 	envm.add_item("Datascience VM", 1)
 	$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit/GraphNode.visible = false
-	show_loading(false)
+	api.show_loading(false)
 
 func _on_HTTPRequest_request_completed(result, response_code, headers, body):
 	"""
@@ -34,41 +36,41 @@ func _on_HTTPRequest_request_completed(result, response_code, headers, body):
 		if json.result.has("error"):
 			_log("API ERROR!!!!!")
 		elif json.result.has("created") and json.result.has("id"):
-			token = json.result.id
-			_log("New token set to : " + token)
+			api.token = json.result.id
+			_log("New token set to : " + api.token)
 		elif json.result[0] and json.result[0].has("name"):
 			add_origin_nodes(json.result)
-	show_loading(false)
+	api.show_loading(false)
 
 func _on_Button_button_up():
 	"""
 	Executed when the Origins button was pressed
 	"""
-	call_api({"entity":"origins"})
+	api.call_api({"entity":"origins"})
 
 func _on_btn_databases_button_up():
 	"""
 	Executed when the Databases button was pressed
 	"""
-	call_api({"entity":"databases"})
+	api.call_api({"entity":"databases"})
 
 func _on_btn_schemas_button_up():
 	"""
 	Executed when the Schemas button was pressed
 	"""
-	call_api({"entity":"schemas"})
+	api.call_api({"entity":"schemas"})
 
 func _on_btn_tables_button_up():
 	"""
 	Executed when the Tables button was pressed
 	"""
-	call_api({"entity":"tables"})
+	api.call_api({"entity":"tables"})
 
 func _on_btn_fields_button_up():
 	"""
 	Executed when the Fields button was pressed
 	"""
-	call_api({"entity":"fields"})
+	api.call_api({"entity":"fields"})
 
 func _on_btn_test_button_up():
 	"""
@@ -99,7 +101,7 @@ func _on_btn_submit_button_up():
 	"""
 	var username_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_username.text
 	var password_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_password.text
-	call_api({"entity": "login", "username": username_txt, "password": password_txt})
+	api.call_api({"entity": "login", "username": username_txt, "password": password_txt})
 
 func _on_btn_clearnodes_button_up():
 	"""
@@ -107,37 +109,12 @@ func _on_btn_clearnodes_button_up():
 	"""
 	clear_all_nodes()
 
-func get_api_url(model="origins", params={}):
-	"""
-	Returns the URL of the API
-	"""
-	var uuenv = uu[$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select.get_selected_id()]
-	var prms = "/api/" + model + "?"
-	if model == "tables":
-		prms += "filter=" + '{"where":{"schemas_idh":"4954873733c5d3600d639b38f1bfc5a6"}}'.percent_encode()
-		return uuenv + prms + "&access_token=" + token;
-	if model == "login":
-		return uuenv + "/api/Users/login"
-	else:
-		prms += "filter=" + '{"limit":22}'.percent_encode()
-	var fullurl = uuenv + prms + "&access_token=" + token;
-	return fullurl
-
 func _log(msg):
 	"""
 	Writes to the visual console in the GUI
 	"""
 	print(msg)
-	#"\n" + str(OS.get_unix_time()) + " : " + msg
 	$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text = msg + "\n" + $MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text
-
-func show_loading(on = true):
-	if on:
-		$LoadingNode2D.visible = true
-		$LoadingNode2D/LoadingNode/LoadingWindowDialog.show()
-	else:
-		$LoadingNode2D.visible = false
-		$LoadingNode2D/LoadingNode/LoadingWindowDialog.hide()		
 
 func create_node(title="", elems=[]):
 	"""
@@ -182,19 +159,6 @@ func clear_all_nodes():
 				kid.clear_all_slots()
 				$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.remove_child(kid)
 	nodes = []
-
-func call_api(params={}):
-	"""
-	Calls the API
-	"""
-	show_loading(true)
-	if params.entity != "":
-		if params.entity == "login":
-			return $HTTPRequest.request(get_api_url(params.entity, params), ["Content-Type: application/json"], false, HTTPClient.METHOD_POST, JSON.print(params))
-		else:
-			return $HTTPRequest.request(get_api_url(params.entity, params))
-	
-	return show_loading(false)
 
 func add_origin_nodes(e=[]):
 	"""
