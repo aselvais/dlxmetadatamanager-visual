@@ -6,6 +6,14 @@ const GraphProcessing = preload("res://GraphProcessing.gd")
 # Container array for the nodes we are displaying in the graph
 var api : DlxmetadatamanagerAPI
 var graphProcessing : GraphProcessing
+var origins_list
+var databases_list
+var schemas_list
+var tables_list
+var origins_selected
+var databases_selected
+var schemas_selected
+var tables_selected
 
 func _ready():
 	"""
@@ -42,39 +50,56 @@ func _on_HTTPRequest_request_completed(result, response_code, headers, body):
 		elif json.result.has("created") and json.result.has("id"):
 			api.token = json.result.id
 			_log("New token set to : " + api.token)
+			api.call_api("getentity", {"entity":"origins"})
 		elif json.result[0] and json.result[0].has("name"):
-			graphProcessing.add_nodes(json.result)
+			if json.result[0].has("origins_idh"):
+				# Databases
+				databases_list = json.result
+				_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/databases_select, json.result)
+			elif json.result[0].has("databases_idh"):
+				# Schemas
+				schemas_list = json.result
+				_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/schemas_select, json.result)
+			elif json.result[0].has("schemas_idh"):
+				# Tables
+				tables_list = json.result
+				_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/tables_select, json.result)
+			elif json.result[0].has("tables_idh"):
+				# Fields
+				#_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/fields_select, json.result)
+				pass
+			else:
+				# Origins
+				origins_list = json.result
+				_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/origins_select, json.result)
 	api.show_loading(false)
+	
+func _populate_option_button(btn : OptionButton, values):
+	"""
+	Populate data to a drop down
+	"""
+	btn.clear()
+	var u = 0
+	btn.add_item("---", 1)
+	for i in values:
+		u += 1
+		btn.add_item(i.name, u)
+	btn.selected = -1
 
-func _on_Button_button_up():
+func _on_origins_select_item_selected(ID):
 	"""
-	Executed when the Origins button was pressed
+	When origin selected
 	"""
-	api.call_api({"entity":"origins"})
+	origins_selected = origins_list[ID-1]
+	api._call_entity({"entity":"databases"}, {"origins_idh": origins_selected.idh})
 
-func _on_btn_databases_button_up():
+func _on_databases_select_item_selected(ID):
 	"""
-	Executed when the Databases button was pressed
+	When databases selected
 	"""
-	api.call_api({"entity":"databases"})
-
-func _on_btn_schemas_button_up():
-	"""
-	Executed when the Schemas button was pressed
-	"""
-	api.call_api({"entity":"schemas"})
-
-func _on_btn_tables_button_up():
-	"""
-	Executed when the Tables button was pressed
-	"""
-	api.call_api({"entity":"tables"})
-
-func _on_btn_fields_button_up():
-	"""
-	Executed when the Fields button was pressed
-	"""
-	api.call_api({"entity":"fields"})
+	_log(str(ID))
+	#databases_selected = databases_list[ID-1]
+	#api._call_entity({"entity":"schemas"}, {"databases_idh": databases_selected.idh})
 
 func _on_btn_test_button_up():
 	"""
@@ -88,7 +113,7 @@ func _on_btn_submit_button_up():
 	"""
 	var username_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_username.text
 	var password_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_password.text
-	api.call_api({"entity": "login", "username": username_txt, "password": password_txt})
+	api.call_api("login", {"entity": "login", "username": username_txt, "password": password_txt})
 
 func _on_btn_clearnodes_button_up():
 	"""
@@ -108,5 +133,3 @@ func _log(msg):
 	"""
 	print(msg)
 	$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text = msg + "\n" + $MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text
-
-
