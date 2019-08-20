@@ -147,13 +147,16 @@ func _log(msg):
 	"""
 	Writes to the visual console in the GUI
 	"""
-	print(msg)
-	$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text = msg + "\n" + $MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text
+	#print(msg)
+	#$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text = msg + "\n" + $MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.text
+	pass
 
 func _show_hidden_gui_elements(loggedin=true):
 	"""
 	Hides the login form and show the rest of the GUI
 	"""
+	$MainGUI2D/VSplitContainer/PanelContainer.visible = false
+	$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.visible = false
 	# hide GUI
 	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select.visible = !loggedin
 	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/label_username.visible = !loggedin

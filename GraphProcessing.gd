@@ -28,10 +28,18 @@ func create_node(title="", elems=[]):
 	var n : GraphNode = nodes[arnbr]
 	n.title = title
 	var vv = n.get_offset()
-	vv.x += 20*(arnbr+1)
-	vv.y += 20*(arnbr+1)
+	#vv.x += 20*(arnbr+1)
+	vv.x += 270*(arnbr+1)
+	# vv.y += 20*(arnbr+1)
 	n.set_offset(vv)
-	# Loop in the elements array (adding field names)
+	_add_fields(n, elems)
+	# make it visible when the rest was done
+	n.visible = true
+
+func _add_fields(n : GraphNode, elems=[]):
+	"""
+	Loop in the elements array (adding field names)
+	"""
 	var idx = 0
 	for i in elems:
 		var lbl = Label.new()
@@ -40,15 +48,11 @@ func create_node(title="", elems=[]):
 			lbl.text += "  <" + str(i.datatype) + '(' + str(i.datalength) + ')>'
 		n.add_child(lbl)
 		# Makes connector available for the PK and FKs
-		#if i.is_pk == 1 or i.is_fk == 1:
-		#	n.set_slot(idx, true, 0, Color.blue, true, 0, Color.white)
 		if i.is_pk == 1:
 			n.set_slot(idx, true, 0, Color.white, true, 0, Color.white)
 		if i.is_fk == 1:
 			n.set_slot(idx, true, 0, Color.red, true, 0, Color.red)
 		idx += 1
-	# make it visible when the rest was done
-	n.visible = true
 
 func clear_all_nodes():
 	"""
@@ -56,7 +60,6 @@ func clear_all_nodes():
 	"""
 	var kids = _GraphEdit.get_children()
 	_GraphEdit.clear_connections()
-	
 	for kid in kids:
 		if kid.is_class("GraphNode"):
 			var k : GraphNode = kid
