@@ -59,6 +59,20 @@ func _call_entity(params={}, where={}):
 			"&access_token=" + token
 	)
 
+func _call_tables_and_fields(params={}, where={}):
+	"""
+	Call tables and fields inside of each table
+	"""
+	show_loading(true)
+	var strquery = '{"where":' + JSON.print(where) + ',"include":"fields"}'
+	return HTTPRequest.request(
+		uu[env_select.get_selected_id()] + 
+			"/api/tables?" + 
+			"filter=" +  (strquery).percent_encode() + 
+			"&access_token=" + token
+	)
+	
+
 func call_api(action="", params={}):
 	"""
 	Calls the API

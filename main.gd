@@ -114,7 +114,8 @@ func _on_schemas_select_item_selected(ID):
 	"""
 	_log(str(ID))
 	schemas_selected = schemas_list[ID-1]
-	api._call_entity({"entity":"tables"}, {"schemas_idh": schemas_selected.idh})
+	# api._call_entity({"entity":"tables"}, {"schemas_idh": schemas_selected.idh})
+	api._call_tables_and_fields({"entity":"tables"}, {"schemas_idh": schemas_selected.idh})
 
 func _on_btn_test_button_up():
 	"""

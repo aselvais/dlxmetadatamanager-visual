@@ -36,10 +36,16 @@ func create_node(title="", elems=[]):
 	for i in elems:
 		var lbl = Label.new()
 		lbl.text = i.name
+		if i.has('datatype') and i.has('datalength'):
+			lbl.text += "  <" + str(i.datatype) + '(' + str(i.datalength) + ')>'
 		n.add_child(lbl)
 		# Makes connector available for the PK and FKs
-		if i.is_pk == 1 or i.is_fk == 1:
-			n.set_slot(idx, true, 0, Color.blue, true, 0, Color.white)
+		#if i.is_pk == 1 or i.is_fk == 1:
+		#	n.set_slot(idx, true, 0, Color.blue, true, 0, Color.white)
+		if i.is_pk == 1:
+			n.set_slot(idx, true, 0, Color.white, true, 0, Color.white)
+		if i.is_fk == 1:
+			n.set_slot(idx, true, 0, Color.red, true, 0, Color.red)
 		idx += 1
 	# make it visible when the rest was done
 	n.visible = true
@@ -87,7 +93,11 @@ func add_nodes(e=[]):
 	Add nodes to the graph
 	"""
 	for n in e:
-		create_node(n.name)
+		var flds = []
+		var name = n.name
+		if n.fields:
+			flds = n.fields
+		create_node(n.name, flds)
 
 
 
