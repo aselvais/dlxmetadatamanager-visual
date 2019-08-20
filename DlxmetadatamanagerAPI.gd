@@ -38,6 +38,7 @@ func _call_login(params={}):
 	"""
 	Call the login API
 	"""
+	show_loading(true)
 	return HTTPRequest.request(
 		uu[env_select.get_selected_id()] + "/api/Users/login",
 		["Content-Type: application/json"], 
@@ -50,6 +51,7 @@ func _call_entity(params={}, where={}):
 	"""
 	Call entity list
 	"""
+	show_loading(true)
 	return HTTPRequest.request(
 		uu[env_select.get_selected_id()] + 
 			"/api/" + params.entity + "?" + 
