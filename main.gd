@@ -13,18 +13,19 @@ var tables_list
 var origins_selected
 var databases_selected
 var schemas_selected
-var tables_selected
+var node_vbox : Node
 
 func _ready():
 	"""
 	Initialization when the scene is ready
 	"""
+	node_vbox = get_node("./MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer")
 	_show_hidden_gui_elements(false)
 	api = DlxmetadatamanagerAPI.new( 
 			$LoadingNode2D,
 			$LoadingNode2D/LoadingNode/LoadingWindowDialog,
 			$HTTPRequest, 
-			$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select
+			node_vbox.get_node('env_select')
 	)
 	graphProcessing = GraphProcessing.new(
 			$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit, 
@@ -34,7 +35,7 @@ func _ready():
 	_log("OS class: " + OS.get_class())
 	_log("OS date time: " + str(OS.get_datetime()))
 	_log("Engine properties: " + str(Engine.get_property_list()))
-	var envm : OptionButton = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select
+	var envm : OptionButton = node_vbox.get_node('env_select')
 	envm.add_item("Localhost", 0)
 	envm.add_item("Datascience VM", 1)
 	api.show_loading(false)
@@ -58,27 +59,27 @@ func _on_HTTPRequest_request_completed(result, response_code, headers, body):
 				# Databases
 				graphProcessing.clear_all_nodes()
 				databases_list = json.result
-				_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/databases_select, json.result)
+				_populate_option_button(node_vbox.get_node('databases_select'), json.result)
 			elif json.result[0].has("databases_idh"):
 				# Schemas
 				graphProcessing.clear_all_nodes()
 				schemas_list = json.result
-				_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/schemas_select, json.result)
+				_populate_option_button(node_vbox.get_node('schemas_select'), json.result)
 			elif json.result[0].has("schemas_idh"):
 				# Tables
 				graphProcessing.clear_all_nodes()
 				tables_list = json.result
-				#_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/tables_select, json.result)
+				#_populate_option_button(node_vbox.get_node('tables_select'), json.result)
 				graphProcessing.add_nodes(tables_list)
 			elif json.result[0].has("tables_idh"):
 				# Fields
-				#_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/fields_select, json.result)
+				#_populate_option_button(node_vbox.get_node('fields_select'), json.result)
 				pass
 			else:
 				# Origins
 				graphProcessing.clear_all_nodes()
 				origins_list = json.result
-				_populate_option_button($MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/origins_select, json.result)
+				_populate_option_button(node_vbox.get_node('origins_select'), json.result)
 	api.show_loading(false)
 	
 func _populate_option_button(btn : OptionButton, values):
@@ -114,7 +115,6 @@ func _on_schemas_select_item_selected(ID):
 	"""
 	_log(str(ID))
 	schemas_selected = schemas_list[ID-1]
-	# api._call_entity({"entity":"tables"}, {"schemas_idh": schemas_selected.idh})
 	api._call_tables_and_fields({"entity":"tables"}, {"schemas_idh": schemas_selected.idh})
 
 func _on_btn_test_button_up():
@@ -127,8 +127,8 @@ func _on_btn_submit_button_up():
 	"""
 	Executed when the submit (username/password) was pressed
 	"""
-	var username_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_username.text
-	var password_txt = $MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_password.text
+	var username_txt = node_vbox.get_node('input_username').text
+	var password_txt = node_vbox.get_node('input_password').text
 	api.call_api("login", {"entity": "login", "username": username_txt, "password": password_txt})
 
 func _on_btn_clearnodes_button_up():
@@ -158,23 +158,22 @@ func _show_hidden_gui_elements(loggedin=true):
 	$MainGUI2D/VSplitContainer/PanelContainer.visible = false
 	$MainGUI2D/VSplitContainer/PanelContainer/RichTextLabel.visible = false
 	# hide GUI
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/env_select.visible = !loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/label_username.visible = !loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_username.visible = !loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/label_password.visible = !loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/input_password.visible = !loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/btn_submit.visible = !loggedin
+	node_vbox.get_node('env_select').visible = !loggedin
+	node_vbox.get_node('label_username').visible = !loggedin
+	node_vbox.get_node('input_username').visible = !loggedin
+	node_vbox.get_node('label_password').visible = !loggedin
+	node_vbox.get_node('input_password').visible = !loggedin
+	node_vbox.get_node('btn_submit').visible = !loggedin
 	# show GUI
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/label_APIs2.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/btn_test.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/label_APIs3.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/btn_clearnodes.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/label_APIs4.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/origins_select.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/databases_select.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/schemas_select.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/Label01.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/Label02.visible = loggedin
-	$MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer/Label03.visible = loggedin
+	node_vbox.get_node('label_APIs2').visible = loggedin
+	node_vbox.get_node('btn_test').visible = loggedin
+	node_vbox.get_node('label_APIs3').visible = loggedin
+	node_vbox.get_node('btn_clearnodes').visible = loggedin
+	node_vbox.get_node('label_APIs4').visible = loggedin
+	node_vbox.get_node('origins_select').visible = loggedin
+	node_vbox.get_node('databases_select').visible = loggedin
+	node_vbox.get_node('schemas_select').visible = loggedin
+	node_vbox.get_node('Label01').visible = loggedin
+	node_vbox.get_node('Label02').visible = loggedin
+	node_vbox.get_node('Label03').visible = loggedin
 	$MainGUI2D/VSplitContainer/PanelContainer.visible = loggedin
-	#$MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit.visible = loggedin

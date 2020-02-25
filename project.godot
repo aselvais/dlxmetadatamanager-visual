@@ -36,13 +36,14 @@ config/icon="res://icon.png"
 
 window/size/width=1920
 window/size/height=1080
-window/dpi/allow_hidpi=true
+window/stretch/aspect="keep"
 
 [rendering]
 
+quality/driver/driver_name="GLES2"
 quality/driver/fallback_to_gles2=true
 quality/2d/gles2_use_nvidia_rect_flicker_workaround=true
-quality/subsurface_scattering/quality=2
 environment/default_clear_color=Color( 0.188235, 0.25098, 0.301961, 1 )
 quality/depth/hdr=false
 environment/default_environment="res://default_env.tres"
+quality/subsurface_scattering/quality=2

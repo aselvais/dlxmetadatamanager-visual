@@ -8,14 +8,19 @@ script = ExtResource( 1 )
 [node name="MainGUI2D" type="Node2D" parent="."]
 
 [node name="VSplitContainer" type="VSplitContainer" parent="MainGUI2D"]
-margin_right = 1920.0
-margin_bottom = 1080.0
+editor/display_folded = true
+margin_right = 148.0
+margin_bottom = 508.0
+rect_min_size = Vector2( 1920, 1080 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
 split_offset = 800
 __meta__ = {
 "_edit_lock_": true
 }
 
 [node name="HSplitContainer" type="HSplitContainer" parent="MainGUI2D/VSplitContainer"]
+editor/display_folded = true
 margin_right = 1920.0
 margin_bottom = 1054.0
 split_offset = 100
@@ -25,7 +30,6 @@ margin_right = 236.0
 margin_bottom = 1054.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer"]
-editor/display_folded = true
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 229.0
@@ -48,7 +52,7 @@ valign = 2
 margin_top = 68.0
 margin_right = 222.0
 margin_bottom = 92.0
-text = "admin"
+text = "arnaud.selvais@deluxe.com"
 
 [node name="label_password" type="Label" parent="MainGUI2D/VSplitContainer/HSplitContainer/PanelContainer/VBoxContainer"]
 margin_top = 96.0
@@ -145,28 +149,26 @@ text = "----"
 margin_left = 248.0
 margin_right = 1920.0
 margin_bottom = 1054.0
-scroll_offset = Vector2( -352.204, -372.486 )
-zoom = 0.578704
+scroll_offset = Vector2( 0, -372 )
 
 [node name="GraphNode" type="GraphNode" parent="MainGUI2D/VSplitContainer/HSplitContainer/GraphEdit"]
-margin_left = 352.204
-margin_top = 372.486
-margin_right = 476.204
-margin_bottom = 401.486
-rect_scale = Vector2( 0.578704, 0.578704 )
+margin_top = 372.0
+margin_right = 124.0
+margin_bottom = 572.0
+rect_min_size = Vector2( 0, 200 )
 mouse_filter = 1
 title = "TABLE (model)"
 resizable = true
 
 [node name="PanelContainer" type="PanelContainer" parent="MainGUI2D/VSplitContainer"]
-editor/display_folded = true
-margin_right = 14.0
-margin_bottom = 14.0
+margin_top = 1066.0
+margin_right = 1920.0
+margin_bottom = 1080.0
 
 [node name="RichTextLabel" type="RichTextLabel" parent="MainGUI2D/VSplitContainer/PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 7.0
+margin_right = 1913.0
 margin_bottom = 7.0
 custom_colors/default_color = Color( 0.243137, 1, 0, 1 )
 
@@ -180,7 +182,6 @@ light_mask = 2
 z_index = 90
 
 [node name="LoadingWindowDialog" type="WindowDialog" parent="LoadingNode2D/LoadingNode"]
-editor/display_folded = true
 visible = true
 margin_left = 712.53
 margin_top = 368.514
